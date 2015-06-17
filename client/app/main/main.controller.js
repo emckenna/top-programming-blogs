@@ -34,8 +34,8 @@ angular.module('topProgrammingBlogsApp')
       $scope.blogs.$save(newBlog); 
     }
     
-    $scope.addVote = function() {
-    
+    $scope.addVote = function(number) {
+      $scope.blogs[number].votes ++;
     }
   
   
