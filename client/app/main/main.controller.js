@@ -13,6 +13,16 @@ angular.module('topProgrammingBlogsApp')
 
     // synchronize the object with a three-way data binding
     //syncObject.$bindTo($scope, "data");
+    
+    // Facebook login
+    var ref = new Firebase("https://top-programming.firebaseio.com/");
+    ref.authWithOAuthPopup("facebook", function(error, authData) {
+      if (error) {
+        console.log("Login Failed!", error);
+      } else {
+        console.log("Authenticated successfully with payload:", authData);
+      }
+    });
   
     $scope.awesomeThings = [];
     
@@ -26,7 +36,7 @@ angular.module('topProgrammingBlogsApp')
         linkingsites: 25,
         mozrank: 3,
         pagerank: 5,
-        votes: 1,
+        votes: [ 1, 2 ],
         latestarticle: "Why Inline CSS Must Die in 2015 or Be Replaced With a New Method"
       };
 
@@ -35,7 +45,9 @@ angular.module('topProgrammingBlogsApp')
     }
     
     $scope.addVote = function(number) {
-      $scope.blogs[number].votes ++;
+      var blog = $scope.blogs[number];
+      blog.votes++;
+      $scope.blogs.$save(blog);
     }
   
   
