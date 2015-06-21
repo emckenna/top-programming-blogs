@@ -21,11 +21,10 @@ angular.module('topProgrammingBlogsApp')
         console.log("Login Failed!", error);
       } else {
         console.log("Authenticated successfully with payload:", authData);
+        $scope.currentUid = authData.uid;
+        $scope.userName = authData.facebook.displayName;
       }
     });
-  
-    var currentUid = "facebook:10104241544048628";
-    console.log(currentUid);
   
     $scope.addBlog = function() { 
       var getBlog = $scope.newContent;
@@ -37,7 +36,7 @@ angular.module('topProgrammingBlogsApp')
         linkingsites: 25,
         mozrank: 3,
         pagerank: 5,
-        votes: [ 1, 2, 123456 ],
+        votes: [1],
         latestarticle: "Why Inline CSS Must Die in 2015 or Be Replaced With a New Method"
       };
 
@@ -46,9 +45,9 @@ angular.module('topProgrammingBlogsApp')
     }
     
     $scope.addVote = function(number) {
-      if($scope.blogs[number].votes.indexOf("facebook:10104241544048628") < 0) {
+      if($scope.blogs[number].votes.indexOf($scope.currentUid) < 0) {
         var blog = $scope.blogs[number];
-        blog.votes.push(currentUid);
+        blog.votes.push($scope.currentUid);
         $scope.blogs.$save(blog);
       }
       else {
@@ -56,7 +55,7 @@ angular.module('topProgrammingBlogsApp')
       }
     }
     //if(blog.indexOf("facebook:10104241544048628") > -1) 
-  
+    
     $http.get('/api/things').success(function(awesomeThings) {
       $scope.awesomeThings = awesomeThings;
     });
