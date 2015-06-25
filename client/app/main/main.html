@@ -46,6 +46,26 @@
       
     <p><span class="glyphicon glyphicon-plus-sign"></span> Suggest a Blog</p
       
+    <ul>
+      <li ng-repeat="x in names">
+        {{ x.Name + ', ' + x.Country }}
+      </li>
+    </ul>
+    
+    <ul>
+      <li ng-repeat="followers in twitterFollowers">
+        {{ followers.followers_count }}
+      </li>
+    </ul>
+
+    <ul>
+      <li ng-repeat="racers in racerNames">
+        {{ racers.Driver.givenName }}
+      </li>
+    </ul>
+
+<p>{{ siteData }} </p>
+
     </div>
   </div>
 </div>

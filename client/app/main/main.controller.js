@@ -26,6 +26,89 @@ angular.module('topProgrammingBlogsApp')
       }
     });
   
+    // encode64() was written by Tyler Akins and has been placed in the
+    // public domain.  It would be nice if you left this header intact.
+    // Base64 code from Tyler Akins -- http://rumkin.com
+    var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  
+    function encode64(input) {
+	var output = "";
+	var chr1, chr2, chr3;
+	var enc1, enc2, enc3, enc4;
+	var i = 0;
+
+	while (i < input.length) {
+		chr1 = input.charCodeAt(i++);
+		chr2 = input.charCodeAt(i++);
+		chr3 = input.charCodeAt(i++);
+
+		enc1 = chr1 >> 2;
+		enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+		enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+		enc4 = chr3 & 63;
+
+		if (isNaN(chr2)) {
+			enc3 = enc4 = 64;
+		} else if (isNaN(chr3)) {
+			enc4 = 64;
+		}
+
+		output += (keyStr.charAt(enc1) + keyStr.charAt(enc2) + keyStr.charAt(enc3) + keyStr.charAt(enc4));
+   }
+   
+   return output.toString();
+    }  
+  
+    // Encode signature
+    var accessId = "mozscape-07bc82a137";
+    var secretKey = "cd446f269d9e9192dbf0220a549e8001";
+    var apiExpires = moment().unix() + 300;
+    console.log(apiExpires);
+    
+    //var stringToSign = accessId+"<br>"+apiExpires;
+    var message = accessId + "\n" + apiExpires;
+  
+    //hmac sha1 hash
+    //var hash = CryptoJS.SHA1(stringToSign,secretKey);
+    var hmacString = Crypto.HMAC(Crypto.SHA1, message, secretKey, { asString: true });
+    //console.log(hash);
+    
+    //urlencode and 64bit encode
+    //var signatureEncoded = encodeURIComponent(btoa(hash));
+    var signature = encode64(hmacString);
+    //console.log(signatureEncoded);
+    console.log(signature);
+    
+  
+    // Mozscape API
+    $http.jsonp('http://lsapi.seomoz.com/linkscape/url-metrics/moz.com%2fblog?Cols=34359754788&AccessID=mozscape-07bc82a137&Expires='+apiExpires+'&Signature='+signature).success(function(siteData) {
+      $scope.siteData = siteData;
+    });
+    
+    console.log($scope.siteData);
+
+  
+  
+  
+    // W3Schools API
+    $http.get("http://www.w3schools.com/angular/customers.php")
+  .success(function (response) {$scope.names = response.records;});
+
+    // Twitter API
+    $http.jsonp('https://api.twitter.com/1.1/followers/list.json?cursor=-1&screen_name=twitterdev&skip_status=true&include_user_entities=false?callback=JSON_CALLBACK')
+    .success(function(tweets){
+        $scope.twitterFollowers = tweets;
+    });
+  
+    // Racers API  
+    $http.get('http://ergast.com/api/f1/2013/driverStandings.json')
+    .success(function(racers){
+        $scope.racerNames = racers;
+    });
+    
+  
+    console.log($scope.awesomeThings);
+  
     $scope.addBlog = function() { 
       var getBlog = $scope.newContent;
       var getUrl = $scope.newUrl;
@@ -54,10 +137,11 @@ angular.module('topProgrammingBlogsApp')
         alert("Sorry! You've already voted for this blog.");
       }
     }
-    //if(blog.indexOf("facebook:10104241544048628") > -1) 
     
-    $http.get('/api/things').success(function(awesomeThings) {
+    
+    /*$http.get('/api/things').success(function(awesomeThings) {
       $scope.awesomeThings = awesomeThings;
-    });
+    }); 
+    */
 
   });
