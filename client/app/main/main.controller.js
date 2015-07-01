@@ -81,14 +81,20 @@ angular.module('topProgrammingBlogsApp')
     
   
     // Mozscape API
-    $http.jsonp('http://lsapi.seomoz.com/linkscape/url-metrics/moz.com%2fblog?Cols=34359754788&AccessID=mozscape-07bc82a137&Expires='+apiExpires+'&Signature='+signature).success(function(siteData) {
-      $scope.siteData = siteData;
-    });
+    mozUri = 'http://lsapi.seomoz.com/linkscape/url-metrics/moz.com%2fblog?Cols=34359754788&AccessID=mozscape-07bc82a137&Expires='+apiExpires+'&Signature='+signature
+    $http.jsonp(mozUri)
+      .success(function(siteData) {
+        console.log('success', siteData);
+        $scope.siteData = siteData;
+      })
+      .error(function(err) {
+        console.log(err);
+      })
     
+    // this will never print antying sicne siteData at this point is still nil.  It has not been set
+    // by the success callback.
     console.log($scope.siteData);
 
-  
-  
   
     // W3Schools API
     $http.get("http://www.w3schools.com/angular/customers.php")
